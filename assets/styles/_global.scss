@@ -1,0 +1,28 @@
+body {
+    font-family: 'Poppins', sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--clr-white);
+}
+
+h1 {
+    font-size: clamp(1.5rem, 1.2697rem + 1.2281vw, 2.375rem);
+    margin-bottom: 1rem;
+}
+
+input {
+    color: var(--clr-black);
+    border-color: var(--clr-neutral-gray-blue);
+    padding: 1rem;
+    border: 1px solid var(--clr-neutral-gray-blue);
+    border-radius: var(--base-radius);
+    outline-color: var(--clr-neutral-blue);
+}
+
+.column-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+a {
+    text-decoration: none;
+}
