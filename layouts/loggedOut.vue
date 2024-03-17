@@ -10,7 +10,7 @@
     background-color: var(--clr-primary-red);
     padding-inline: 1rem;
     background-image: url('../assets/images/bg-intro-mobile.png');
-    padding-top: 5rem;
+    padding-block: 5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
