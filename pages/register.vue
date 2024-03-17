@@ -18,9 +18,9 @@ definePageMeta({
                     <input type="text" placeholder="Last Name" />
                     <input type="email" placeholder="Email Address" />
                     <input type="password" placeholder="Password" />
-                    <!-- <UiAction type="submit">
+                    <UiAction type="submit">
                         <span>Create account</span>
-                    </UiAction> -->
+                    </UiAction>
                 </form>
             </UiCard>
        </section>
