@@ -6,7 +6,7 @@
 
 <style lang="scss" scoped>
 .logged-out-layout {
-    min-height: 100svh;
+    min-height: 100vh;
     background-color: var(--clr-primary-red);
     padding-inline: 1rem;
     background-image: url('../assets/images/bg-intro-mobile.png');
