@@ -2,6 +2,17 @@
 definePageMeta({
     layout: 'logged-out'
 });
+
+interface FormData {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+}
+
+function handleSubmit (data: FormData) {
+    console.log(data);
+}
 </script>
 
 <template>
@@ -13,15 +24,45 @@ definePageMeta({
        <section class="form">
             <UiAction variant="accent" kind="link" href="login">Have an account? Signin</UiAction>
             <UiCard>
-                <form class="column-flow">
-                    <input type="text" placeholder="First Name" />
-                    <input type="text" placeholder="Last Name" />
-                    <input type="email" placeholder="Email Address" />
-                    <input type="password" placeholder="Password" />
+                <FormKit type="form" :actions="false" form-class="column-flow" @submit="handleSubmit">
+                    <FormKit
+                        id="first_name"
+                        type="text"
+                        name="first_name"
+                        :validation-messages="{ required: 'First name is required'}"
+                        placeholder="First Name"
+                        validation="required"
+                        validation-visibility="blur"
+                    /> 
+                    <FormKit
+                        id="last_name"
+                        type="text"
+                        name="last_name"
+                        :validation-messages="{ required: 'Last name is required'}"
+                        placeholder="Last Name"
+                        validation="required"
+                        validation-visibility="blur"
+                    /> 
+                    <FormKit
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        validation="required|email"
+                        validation-visibility="blur"
+                    />
+                    <FormKit
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        validation="required"
+                        validation-visibility="blur"
+                    />
                     <UiAction type="submit">
                         <span>Create account</span>
                     </UiAction>
-                </form>
+                </FormKit>
             </UiCard>
        </section>
     </main>
