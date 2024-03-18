@@ -2,6 +2,15 @@
 definePageMeta({
     layout: 'logged-out'
 });
+
+interface FormData {
+    email: string;
+    password: string;
+}
+
+function handleSubmit (data: FormData) {
+    console.log(data);
+}
 </script>
 
 <template>
@@ -13,13 +22,27 @@ definePageMeta({
        <section class="form">
             <UiAction variant="accent" kind="link" href="register">Wanna join? Sign up</UiAction>
             <UiCard>
-                <form class="column-flow">
-                    <input type="email" placeholder="Email Address" />
-                    <input type="password" placeholder="Password" />
+                <FormKit type="form" :actions="false" form-class="column-flow" @submit="handleSubmit">
+                    <FormKit
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        validation="required|email"
+                        validation-visibility="blur"
+                    />
+                    <FormKit
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        validation="required"
+                        validation-visibility="blur"
+                    />
                     <UiAction type="submit">
                         <span>Sign in</span>
                     </UiAction>
-                </form>
+                </FormKit>
             </UiCard>
        </section>
     </main>
