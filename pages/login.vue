@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 definePageMeta({
     layout: 'logged-out'
 });
@@ -8,8 +9,13 @@ interface FormData {
     password: string;
 }
 
-function handleSubmit (data: FormData) {
-    console.log(data);
+async function handleSubmit (formData: FormData) {
+    try {
+        console.log(formData)
+    }
+    catch (e){
+        console.log(e);
+    }
 }
 </script>
 

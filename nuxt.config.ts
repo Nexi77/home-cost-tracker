@@ -3,4 +3,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/styles/main.scss'],
   modules: ['@formkit/nuxt'],
+  runtimeConfig: {
+    public: {
+      apiUrl: '',
+    }
+  }
 })
