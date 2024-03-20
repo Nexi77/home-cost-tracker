@@ -1,17 +1,33 @@
 <script setup lang="ts">
+import type { ApiError, ApiResponse, RegisterResponse } from '~/types/api';
+import type { FormKitNode } from '@formkit/core'
 definePageMeta({
     layout: 'logged-out'
 });
 
 interface FormData {
-    first_name: string;
-    last_name: string;
+    name: string;
     email: string;
     password: string;
 }
 
-function handleSubmit (data: FormData) {
-    console.log(data);
+const isLoading = ref(false);
+
+async function handleSubmit (formData: FormData, node: FormKitNode) {
+    const api = useApi();
+    const { $toast } = useNuxtApp()
+    isLoading.value = true;
+    const response = await api.post<ApiResponse<RegisterResponse>>('register', formData);
+    isLoading.value = false;
+    if (response.status !== 200) {
+        const resData = response.data as ApiError;
+        const { message, errors } = resData;
+        $toast.error(message);
+        node.setErrors([], errors)
+        return;
+    }
+    $toast.success('Your registration is complete, you can now log in');
+    navigateTo('/login')
 }
 </script>
 
@@ -26,20 +42,11 @@ function handleSubmit (data: FormData) {
             <UiCard>
                 <FormKit type="form" :actions="false" form-class="column-flow" @submit="handleSubmit">
                     <FormKit
-                        id="first_name"
+                        id="name"
                         type="text"
-                        name="first_name"
-                        :validation-messages="{ required: 'First name is required'}"
-                        placeholder="First Name"
-                        validation="required"
-                        validation-visibility="blur"
-                    /> 
-                    <FormKit
-                        id="last_name"
-                        type="text"
-                        name="last_name"
-                        :validation-messages="{ required: 'Last name is required'}"
-                        placeholder="Last Name"
+                        name="name"
+                        :validation-messages="{ required: 'Name is required'}"
+                        placeholder="Name"
                         validation="required"
                         validation-visibility="blur"
                     /> 
@@ -47,8 +54,8 @@ function handleSubmit (data: FormData) {
                         id="email"
                         type="email"
                         name="email"
-                        placeholder="Email Address"
                         validation="required|email"
+                        placeholder="Email Address"
                         validation-visibility="blur"
                     />
                     <FormKit
@@ -59,7 +66,7 @@ function handleSubmit (data: FormData) {
                         validation="required"
                         validation-visibility="blur"
                     />
-                    <UiAction type="submit">
+                    <UiAction type="submit" :is-loading="isLoading">
                         <span>Create account</span>
                     </UiAction>
                 </FormKit>
