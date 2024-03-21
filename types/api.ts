@@ -21,6 +21,6 @@ export interface ApiError {
 }
 
 export interface ApiResponse<T> {
-    status: number;
+    status_page: number;
     data: T | ApiError
 }

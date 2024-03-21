@@ -22,7 +22,7 @@ async function handleSubmit (formData: FormData, node: FormKitNode) {
     isLoading.value = true;
     const response = await api.post<ApiResponse<LoginResponse>>('login', formData);
     isLoading.value = false;
-    if (response.status !== 200) {
+    if (response.status_page >= 400) {
         const resData = response.data as ApiError;
         const { message, errors } = resData;
         $toast.error(message);
@@ -32,7 +32,6 @@ async function handleSubmit (formData: FormData, node: FormKitNode) {
     const token = (response.data as LoginResponse).token;
     authStore.token = token;
     navigateTo('/')
-
 }
 </script>
 

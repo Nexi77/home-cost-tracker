@@ -19,7 +19,7 @@ async function handleSubmit (formData: FormData, node: FormKitNode) {
     isLoading.value = true;
     const response = await api.post<ApiResponse<RegisterResponse>>('register', formData);
     isLoading.value = false;
-    if (response.status !== 200) {
+    if (response.status_page >= 400) {
         const resData = response.data as ApiError;
         const { message, errors } = resData;
         $toast.error(message);
@@ -63,7 +63,7 @@ async function handleSubmit (formData: FormData, node: FormKitNode) {
                         type="password"
                         name="password"
                         placeholder="Password"
-                        validation="required"
+                        validation="required|length:8"
                         validation-visibility="blur"
                     />
                     <UiAction type="submit" :is-loading="isLoading">
