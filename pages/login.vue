@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { FormKitNode } from '@formkit/core';
+import type { ApiError, ApiResponse, LoginResponse } from '~/types/api';
+import { useAuthStore } from '~/stores/auth'
+
 
 definePageMeta({
     layout: 'logged-out'
@@ -9,18 +13,31 @@ interface FormData {
     password: string;
 }
 
-async function handleSubmit (formData: FormData) {
-    try {
-        console.log(formData)
+const isLoading = ref(false);
+const authStore = useAuthStore()
+
+async function handleSubmit (formData: FormData, node: FormKitNode) {
+    const api = useApi();
+    const { $toast } = useNuxtApp()
+    isLoading.value = true;
+    const response = await api.post<ApiResponse<LoginResponse>>('login', formData);
+    isLoading.value = false;
+    if (response.status_page >= 400) {
+        const resData = response.data as ApiError;
+        const { message, errors } = resData;
+        $toast.error(message);
+        node.setErrors([], errors)
+        return;
     }
-    catch (e){
-        console.log(e);
-    }
+    const token = (response.data as LoginResponse).token;
+    authStore.token = token;
+    navigateTo('/')
 }
 </script>
 
 <template>
     <main class="login-site">
+        {{ authStore.token }}
        <section class="intro">
             <h1>Welcome!</h1>
             <p>You can use the form here, to log in and take control of your finances easily, don't waste more time, as time is money.</p>
@@ -45,7 +62,7 @@ async function handleSubmit (formData: FormData) {
                         validation="required"
                         validation-visibility="blur"
                     />
-                    <UiAction type="submit">
+                    <UiAction type="submit" :is-loading="isLoading">
                         <span>Sign in</span>
                     </UiAction>
                 </FormKit>
