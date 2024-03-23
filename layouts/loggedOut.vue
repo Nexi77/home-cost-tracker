@@ -6,6 +6,7 @@
 
 <style lang="scss" scoped>
 .logged-out-layout {
+    color: var(--clr-white);
     min-height: 100vh;
     background-color: var(--clr-primary-red);
     padding-inline: 1rem;

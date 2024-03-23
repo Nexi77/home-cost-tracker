@@ -1,5 +1,27 @@
 <template>
     <div class="layout default-layout">
-        <slot />
+        <Menu />
+        <div class="content-wrapper">
+            <Header />
+            <main>
+                <slot />
+            </main>
+        </div>
     </div>
 </template>
+<style lang="scss" scoped>
+.default-layout {
+    min-height: 100vh;
+    display: flex;
+    color: var(--clr-black);
+}
+.content-wrapper {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+main {
+    padding: 1rem;
+}
+</style>
