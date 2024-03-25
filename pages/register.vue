@@ -14,10 +14,10 @@ interface FormData {
 const isLoading = ref(false);
 
 async function handleSubmit (formData: FormData, node: FormKitNode) {
-    const api = useApi();
+    const { $api } = useNuxtApp();
     const { $toast } = useNuxtApp()
     isLoading.value = true;
-    const response = await api.post<ApiResponse<RegisterResponse>>('register', formData);
+    const response = await $api.post<ApiResponse<RegisterResponse>>('register', formData);
     isLoading.value = false;
     if (response.status_page >= 400) {
         const resData = response.data as ApiError;

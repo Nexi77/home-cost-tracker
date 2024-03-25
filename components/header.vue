@@ -5,10 +5,10 @@ const uiStore = useUiStore();
 
 <template>
     <header>
+        <OrganismProfile />
         <button type="button" title="Click to open the menu" @click="uiStore.menuOpened = !uiStore.menuOpened">
             <font-awesome-icon icon="fa-solid fa-bars" />
         </button>
-        <OrganismProfile />
     </header>
 </template>
 

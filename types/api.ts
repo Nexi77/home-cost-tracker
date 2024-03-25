@@ -1,3 +1,5 @@
+import type { UserData } from "~/stores/auth";
+
 export interface UserModel {
     name: string;
     email: string;
@@ -23,4 +25,9 @@ export interface ApiError {
 export interface ApiResponse<T> {
     status_page: number;
     data: T | ApiError
+}
+
+export interface UserResponse {
+    message: string;
+    user: UserData;
 }

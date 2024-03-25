@@ -17,10 +17,10 @@ const isLoading = ref(false);
 const authStore = useAuthStore()
 
 async function handleSubmit (formData: FormData, node: FormKitNode) {
-    const api = useApi();
+    const { $api } = useNuxtApp();
     const { $toast } = useNuxtApp()
     isLoading.value = true;
-    const response = await api.post<ApiResponse<LoginResponse>>('login', formData);
+    const response = await $api.post<ApiResponse<LoginResponse>>('login', formData);
     isLoading.value = false;
     if (response.status_page >= 400) {
         const resData = response.data as ApiError;
@@ -37,7 +37,6 @@ async function handleSubmit (formData: FormData, node: FormKitNode) {
 
 <template>
     <main class="login-site">
-        {{ authStore.token }}
        <section class="intro">
             <h1>Welcome!</h1>
             <p>You can use the form here, to log in and take control of your finances easily, don't waste more time, as time is money.</p>

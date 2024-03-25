@@ -17,6 +17,10 @@ input {
     outline-color: var(--clr-neutral-blue);
 }
 
+button {
+    cursor: pointer;
+}
+
 .column-flow {
     display: flex;
     flex-direction: column;
@@ -59,5 +63,22 @@ a {
     @media screen and (min-width: 1440px) {
         grid-template-columns: auto minmax(500px, 1fr);
         gap: 80px;
+    }
+}
+
+.label-box {
+    margin-top: 40px;
+    font-size: 1.3rem;
+    .label-pair-wrapper {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+        gap: 15px;
+        label {
+            font-style: italic;
+        }
+        span {
+            font-weight: bold;
+        }
     }
 }

@@ -22,6 +22,6 @@
 }
 
 main {
-    padding: 1rem;
+    padding: 2rem min(4rem, 5vw);
 }
 </style>

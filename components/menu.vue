@@ -1,10 +1,27 @@
 <script setup lang="ts">
 import { useUiStore } from '~/stores/ui';
+import type { ApiResponse } from '~/types/api';
 const uiStore = useUiStore();
+const authStore = useAuthStore();
+
+async function handleLogout() {
+    const { $api } = useNuxtApp();
+    const { $toast } = useNuxtApp();
+    const response = await $api.post<ApiResponse<{ message: string }>>('logout');
+    if(response.status_page >= 400) {
+        $toast.error('Could not log out, try again');
+        return;
+    }
+    authStore.token = '';
+    navigateTo('/login');
+}
 </script>
 
 <template>
     <nav :class="{'expanded': uiStore.menuOpened}">
+        <button type="button" class="menu-toggle" title="Press to close the menu" @click="uiStore.menuOpened = false">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
+        </button>
         <NuxtLink to="/">
             <img src="~/assets/images/logo.png" alt="budget boss" class="logo"/>
         </NuxtLink>
@@ -16,6 +33,10 @@ const uiStore = useUiStore();
                 </NuxtLink>
             </li>
         </ul>
+        <UiAction class="logout" variant="accent" @click="handleLogout">
+            <font-awesome-icon icon="fa-solid fa-right-to-bracket" />
+            Logout
+        </UiAction>
     </nav>
 </template>
 
@@ -45,10 +66,32 @@ nav {
         transform: translateX(0);
     }
 
+    .menu-toggle {
+        display: none;
+    }
+
     @media screen and (max-width: 768px) {
         transform: translateX(-100vw);
         position: absolute;
+        inset: 0;
+        .menu-toggle {
+            display: inline-block;
+        }
     }
+}
+.logout {
+    margin-top: auto;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.menu-toggle {
+    border: 0;
+    background-color: 0;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 1.3rem;
 }
 
 ul {
