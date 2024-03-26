@@ -19,6 +19,5 @@ export default defineNuxtRouteMiddleware(async (to) =>
 
     if (authStore.token || isUnauthorizedPage)
         return;
-
     return navigateTo({ name: 'login' });
 });

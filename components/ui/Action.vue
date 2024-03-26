@@ -38,6 +38,10 @@ withDefaults(defineProps<Props>(), {
     border-radius: var(--base-radius);
     padding: 1rem;
     cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
 
     &.primary {
         background-color: var(--clr-primary-green);

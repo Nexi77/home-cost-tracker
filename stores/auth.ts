@@ -7,6 +7,7 @@ export interface UserData {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    is_first_config: boolean;
 }
 export interface AuthState {
     token: string;

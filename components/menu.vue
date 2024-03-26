@@ -3,10 +3,9 @@ import { useUiStore } from '~/stores/ui';
 import type { ApiResponse } from '~/types/api';
 const uiStore = useUiStore();
 const authStore = useAuthStore();
+const { $api, $toast } = useNuxtApp();
 
 async function handleLogout() {
-    const { $api } = useNuxtApp();
-    const { $toast } = useNuxtApp();
     const response = await $api.post<ApiResponse<{ message: string }>>('logout');
     if(response.status_page >= 400) {
         $toast.error('Could not log out, try again');
@@ -30,6 +29,12 @@ async function handleLogout() {
                 <NuxtLink to="/">
                     <font-awesome-icon icon="fa-solid fa-money-bill-wave" />
                     <span>Costs</span>
+                </NuxtLink>
+            </li>
+            <li>
+                <NuxtLink to="/costs/types">
+                    <font-awesome-icon icon="fa-solid fa-calculator" />
+                    <span>Cost types</span>
                 </NuxtLink>
             </li>
         </ul>
@@ -81,9 +86,6 @@ nav {
 }
 .logout {
     margin-top: auto;
-    display: flex;
-    gap: 10px;
-    align-items: center;
 }
 .menu-toggle {
     border: 0;
@@ -101,6 +103,7 @@ ul {
     a {
         color: var(--clr-font-gray-blue);
         display: flex;
+        justify-content: center;
         padding: 1rem 1.5rem;
         border-radius: var(--base-radius);
         align-items: center;

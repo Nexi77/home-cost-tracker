@@ -4,7 +4,7 @@ const authStore = useAuthStore();
 
 <template>
     <div class="user-profile">
-        <NuxtLink to="profile">
+        <NuxtLink to="/profile">
             <div class="user-crud" v-if="authStore.data">
                 <span class="name">{{ authStore.data.name }}</span>
                 <span>My profile</span>

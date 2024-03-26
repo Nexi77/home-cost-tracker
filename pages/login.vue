@@ -15,10 +15,9 @@ interface FormData {
 
 const isLoading = ref(false);
 const authStore = useAuthStore()
+const { $api, $toast } = useNuxtApp();
 
 async function handleSubmit (formData: FormData, node: FormKitNode) {
-    const { $api } = useNuxtApp();
-    const { $toast } = useNuxtApp()
     isLoading.value = true;
     const response = await $api.post<ApiResponse<LoginResponse>>('login', formData);
     isLoading.value = false;

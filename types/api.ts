@@ -31,3 +31,12 @@ export interface UserResponse {
     message: string;
     user: UserData;
 }
+
+export interface CostTypeModel {
+    name: string;
+    desc: string;
+}
+
+export interface CostTypeResponse {
+    cost_type: CostTypeModel[];
+}
