@@ -18,6 +18,7 @@ withDefaults(defineProps<Props>(), {
 .alert {
     --border-color: '';
     --bg-color: '';
+    margin-bottom: 1rem;
     border: 3px solid var(--border-color);
     background-color: var(--bg-color);
     padding: 0.5rem 0.8rem;

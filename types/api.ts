@@ -1,4 +1,5 @@
 import type { UserData } from "~/stores/auth";
+import type { CostTypeModel } from "./general";
 
 export interface UserModel {
     name: string;
@@ -30,11 +31,6 @@ export interface ApiResponse<T> {
 export interface UserResponse {
     message: string;
     user: UserData;
-}
-
-export interface CostTypeModel {
-    name: string;
-    desc: string;
 }
 
 export interface CostTypeResponse {

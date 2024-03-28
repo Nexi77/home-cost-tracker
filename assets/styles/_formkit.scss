@@ -1,6 +1,21 @@
-.formkit-inner {
-    display: flex;
-    flex-direction: column;
+fieldset {
+    border-radius: var(--base-radius);
+}
+
+input[type="text"], input[type="password"], input[type="email"], textarea {
+    width: 100%;
+    color: var(--clr-black);
+    border-color: var(--clr-neutral-gray-blue);
+    padding-block: 1rem;
+    padding-left: 0.5rem;
+    border: 1px solid var(--clr-neutral-gray-blue);
+    border-radius: var(--base-radius);
+    outline-color: var(--clr-neutral-blue);
+    resize: none;
+}
+
+input[type="radio"] {
+    margin-right: 8px;
 }
 
 .formkit-messages {
@@ -12,4 +27,9 @@
 .formkit-messages li[data-message-type="validation"], .formkit-messages li[data-message-type="error"] {
     color: var(--clr-error);
     font-size: small;
+}
+
+.formkit-option-help {
+    font-size: small;
+    color: var(--clr-accent)
 }
