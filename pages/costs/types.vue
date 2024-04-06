@@ -7,6 +7,7 @@ interface FormData {
     desc: string;
 }
 
+const listOfTypesToCreate = ref<CostTypeModel[]>([]);
 const { $api } = useNuxtApp();
 const authStore = useAuthStore();
 const modalOpened = ref(false);
@@ -23,7 +24,6 @@ const radioOptions = computed(() => {
     return suggestionList.value.map(suggestion => ({ label: suggestion.name, value: suggestion.name, help: suggestion.desc }))
 })
 const selectedSuggestionObject = computed(() => suggestionList.value.find(sug => sug.name === suggestion.value))
-const listOfTypesToCreate = ref<CostTypeModel[]>([]);
 
 async function fetchCostTypes () {
     const response = await $api.get<ApiResponse<CostTypeResponse>>('cost-types');
@@ -37,6 +37,10 @@ function handleModal () {
 
 async function handleAdd(data: FormData){
     listOfTypesToCreate.value.push(data);
+}
+
+function handleRowDelete(index: number) {
+    listOfTypesToCreate.value.splice(index, 1);
 }
 
 fetchCostTypes();
@@ -62,7 +66,7 @@ fetchCostTypes();
                 </div>
             </template>
         </main>
-        <UiDialog :model-value="modalOpened" width="600px" @update:model-value="modalOpened = $event">
+        <UiDialog :model-value="modalOpened" width="1200px" @update:model-value="modalOpened = $event">
             <template #header>
                 Add cost type
             </template>
@@ -109,6 +113,28 @@ fetchCostTypes();
                             Add
                         </UiAction>
                 </FormKit>
+                <h3>Selected types:</h3>
+                <MoleculesList 
+                    :items="listOfTypesToCreate" 
+                    class="form-list" 
+                    @delete-row="handleRowDelete"
+                    :actions-to-hide="['edit']"
+                >
+                    <template #row="{ item }">
+                        <AtomsListItem :item="item">
+                            <template #item="{ entry }">
+                                <div class="list-item-entry">
+                                    <span class="list-item-label">Name:</span>
+                                    <span>{{ (entry as FormData).name }}</span>
+                                </div>
+                                <div class="list-item-entry">
+                                    <span class="list-item-label">Description:</span>
+                                    <span> {{ (entry as FormData).desc }}</span>
+                                </div>
+                            </template>
+                        </AtomsListItem>
+                    </template>
+                </MoleculesList>
             </div>
         </UiDialog>
     </section>
@@ -124,6 +150,10 @@ fetchCostTypes();
     border: 0;
     color: var(--clr-primary-green);
     text-decoration: underline;
+}
+
+.form-list {
+    margin-top: 0.5rem;
 }
 
 .new-user-message {

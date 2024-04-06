@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
     type?: "button" | "submit" | "reset"
-    variant?: "primary" | "accent",
+    variant?: "primary" | "accent" | "error",
     kind?: "button" | "link",
     href?: string;
     isLoading?: boolean;
@@ -49,6 +49,10 @@ withDefaults(defineProps<Props>(), {
 
     &.accent {
         background-color: var(--clr-accent);
+    }
+
+    &.error {
+        background-color: var(--clr-primary-red);
     }
     
     &:focus, &:hover {
