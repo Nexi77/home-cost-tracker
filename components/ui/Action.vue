@@ -39,6 +39,7 @@ withDefaults(defineProps<Props>(), {
     padding: 1rem;
     cursor: pointer;
     display: flex;
+    white-space: nowrap;
     gap: 10px;
     align-items: center;
     justify-content: center;

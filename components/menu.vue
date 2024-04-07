@@ -4,6 +4,7 @@ import type { ApiResponse } from '~/types/api';
 const uiStore = useUiStore();
 const authStore = useAuthStore();
 const { $api, $toast } = useNuxtApp();
+const router = useRouter();
 
 async function handleLogout() {
     const response = await $api.post<ApiResponse<{ message: string }>>('logout');
@@ -13,6 +14,10 @@ async function handleLogout() {
     }
     authStore.token = '';
     navigateTo('/login');
+}
+
+const isPartOfRoute = (parentPath: string) => {
+    return router.currentRoute.value.fullPath.startsWith(parentPath);
 }
 </script>
 
@@ -32,7 +37,7 @@ async function handleLogout() {
                 </NuxtLink>
             </li>
             <li>
-                <NuxtLink to="/costs/types">
+                <NuxtLink to="/costs/types" :class="{ 'router-link-active': isPartOfRoute('/costs/types')}">
                     <font-awesome-icon icon="fa-solid fa-calculator" />
                     <span>Cost types</span>
                 </NuxtLink>
@@ -115,7 +120,7 @@ ul {
             max-width: 50px;
         }
 
-        &.router-link-exact-active {
+        &.router-link-active {
             background-color: var(--clr-primary-red);
             color: var(--clr-white);
         }

@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import type { ApiResponse, CostTypeResponse } from '~/types/api';
-import type {  CostTypeModel } from '~/types/general';
+import type { ApiError, ApiResponse, CostTypeResponse, UserResponse } from '~/types/api';
+import type {  CostTypeModel, Pagination } from '~/types/general';
 
 interface FormData {
     name: string;
     desc: string;
 }
 
-const listOfTypesToCreate = ref<CostTypeModel[]>([]);
-const { $api } = useNuxtApp();
+const { $api, $toast } = useNuxtApp();
 const authStore = useAuthStore();
 const modalOpened = ref(false);
-const data = ref<CostTypeResponse | null>(null);
+const data = ref<CostTypeModel[]>([]);
 const suggestion = ref('Food and Dining')
 const suggestionList = ref([
     { name: 'Food and Dining', desc: 'Keep track of your grocery shopping and dining-out expenses.'},
@@ -28,22 +27,38 @@ const selectedSuggestionObject = computed(() => suggestionList.value.find(sug =>
 async function fetchCostTypes () {
     const response = await $api.get<ApiResponse<CostTypeResponse>>('cost-types');
     if(response.status_page === 200)
-        data.value = response.data as CostTypeResponse;
+    {
+        data.value = (response.data as CostTypeResponse).cost_types.data
+    }
 }
 
 function handleModal () {
     modalOpened.value = true;
 }
 
-async function handleAdd(data: FormData){
-    listOfTypesToCreate.value.push(data);
+async function saveNewCost(data: FormData){
+    try {
+        const response = await $api.post<ApiResponse<CostTypeModel>>('cost-types', data);
+        if(response.status_page >= 400) {
+            const resData = response.data as ApiError;
+            const { message } = resData;
+            $toast.error(message);
+            return;
+        }
+        $toast.success(response.data.message);
+        await $api.patch('user/config');
+        const userData = await $api.get<ApiResponse<UserResponse>>('user');
+        if(userData.status_page <= 299)
+            authStore.data = (userData.data as UserResponse).user;
+        await fetchCostTypes();
+        modalOpened.value = false;
+    }
+    catch(err) {
+        console.error(err);
+    }
 }
 
-function handleRowDelete(index: number) {
-    listOfTypesToCreate.value.splice(index, 1);
-}
-
-fetchCostTypes();
+await fetchCostTypes();
 </script>
 
 <template>
@@ -65,6 +80,28 @@ fetchCostTypes();
                     </div>
                 </div>
             </template>
+                <MoleculesList 
+                    v-if="data.length"
+                    :items="data" 
+                    class="form-list" 
+                    :actions-to-hide="['delete']"
+                    @edit-row="($event) => $event.id ? navigateTo({ name: 'costs-types-id', params: { id: $event.id }}) : undefined"
+                >
+                    <template #row="{ item }">
+                        <AtomsListItem :item="item">
+                            <template #item="{ entry }">
+                                <div class="list-item-entry">
+                                    <span class="list-item-label">Name:</span>
+                                    <span>{{ (entry as FormData).name }}</span>
+                                </div>
+                                <div class="list-item-entry">
+                                    <span class="list-item-label">Description:</span>
+                                    <span> {{ (entry as FormData).desc }}</span>
+                                </div>
+                            </template>
+                        </AtomsListItem>
+                    </template>
+                </MoleculesList>
         </main>
         <UiDialog :model-value="modalOpened" width="1200px" @update:model-value="modalOpened = $event">
             <template #header>
@@ -83,7 +120,7 @@ fetchCostTypes();
                         :options="radioOptions"
                     />
                 </div>
-                <FormKit type="form" :actions="false" form-class="column-flow" @submit="handleAdd">
+                <FormKit type="form" :actions="false" form-class="column-flow" @submit="saveNewCost">
                         <FormKit
                             id="name"
                             type="text"
@@ -113,28 +150,6 @@ fetchCostTypes();
                             Add
                         </UiAction>
                 </FormKit>
-                <h3>Selected types:</h3>
-                <MoleculesList 
-                    :items="listOfTypesToCreate" 
-                    class="form-list" 
-                    @delete-row="handleRowDelete"
-                    :actions-to-hide="['edit']"
-                >
-                    <template #row="{ item }">
-                        <AtomsListItem :item="item">
-                            <template #item="{ entry }">
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Name:</span>
-                                    <span>{{ (entry as FormData).name }}</span>
-                                </div>
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Description:</span>
-                                    <span> {{ (entry as FormData).desc }}</span>
-                                </div>
-                            </template>
-                        </AtomsListItem>
-                    </template>
-                </MoleculesList>
             </div>
         </UiDialog>
     </section>
@@ -170,5 +185,14 @@ fetchCostTypes();
 
 .suggestion-list {
     margin-bottom: 1rem;
+}
+
+.final {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    button {
+        width: 100%;
+    }
 }
 </style>

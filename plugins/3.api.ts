@@ -72,6 +72,11 @@ class ApiHelper implements ApiModel {
         return await this.fetch<T>(url, { method: 'PUT', body });
     }
 
+    public async patch<T>(url: string, body: Record<string, any> = {}): Promise<T>
+    {
+        return await this.fetch<T>(url, { method: 'PATCH', body });
+    }
+
     public async delete<T>(url: string, params: Record<string, any>): Promise<T>
     {
         return await this.fetch<T>(url, { method: 'DELETE', params });

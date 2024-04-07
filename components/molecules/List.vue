@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import generateRandomId from '~/utils/genRandomId';
 interface Props {
-    items: unknown[];
+    items: any[];
     actionsToHide?: ('edit' | 'delete')[]
 }
 interface Emits {
-    (e: 'delete-row', index: number): void,
-    (e: 'edit-row', index: number): void
+    (e: 'delete-row', { index, id } : { index: number, id: number | undefined }): void,
+    (e: 'edit-row', { index, id } : { index: number, id: number | undefined }): void
 }
 defineEmits<Emits>();
 const props = withDefaults(defineProps<Props>(), {
@@ -20,13 +20,13 @@ const hideActions = computed(() => {
 
 <template>
     <div class="list-wrapper">
-        <div class="list-row" v-for="(item, index) in items" :key="generateRandomId()">
+        <div class="list-row" v-for="(item, index) in items" :key="item.id || generateRandomId()">
             <slot name="row" :item="item" />
             <div class="actions" v-if="!hideActions">
-                <UiAction title="edit entry" @click="$emit('edit-row', index)" v-if="!actionsToHide.includes('edit')">
+                <UiAction title="edit entry" @click="$emit('edit-row', { index, id: item?.id })" v-if="!actionsToHide.includes('edit')">
                     <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                 </UiAction>
-                <UiAction title="delete entry" variant="error" @click="$emit('delete-row', index)" v-if="!actionsToHide.includes('delete')">
+                <UiAction title="delete entry" variant="error" @click="$emit('delete-row', { index, id: item?.id })" v-if="!actionsToHide.includes('delete')">
                     <font-awesome-icon icon="fa-solid fa-times" />
                 </UiAction>
             </div>
@@ -45,7 +45,6 @@ const hideActions = computed(() => {
 
 .list-row {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     border-top: 1px solid;
     padding: 0.5rem 0.2rem;
@@ -58,6 +57,7 @@ const hideActions = computed(() => {
 }
 .actions {
     display: flex;
+    margin-left: auto;
     gap: 10px;
     & > * {
         flex-grow: 1;
