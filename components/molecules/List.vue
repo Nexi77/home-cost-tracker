@@ -31,13 +31,21 @@ const hideActions = computed(() => {
                 </UiAction>
             </div>
         </div>
-        <div v-if="items.length === 0">
+        <div v-if="items.length === 0" class="empty-list">
             No entries yet specified
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
+.empty-list {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    border: 1px solid var(--clr-accent);
+    background-color: var(--clr-accent-alpha);
+    color: var(--clr-black);
+}
 .list-wrapper {
     display: flex;
     flex-direction: column;

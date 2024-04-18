@@ -175,7 +175,7 @@ dialog.hide {
 .wrapper {
     --padding-top: 10px;
     --padding-inline: 12px;
-    --padding-bottom: 52px;
+    --padding-bottom: 10px;
 
     padding: var(--padding-top) var(--padding-inline) var(--padding-bottom);
     display: grid;

@@ -10,6 +10,7 @@ interface FormData {
 
 const id = useRoute().params.id;
 const { $api, $toast } = useNuxtApp();
+const isLoading = ref(false);
 const costTypeData = ref<CostTypeModel>({
     desc: '',
     id: null,
@@ -17,18 +18,37 @@ const costTypeData = ref<CostTypeModel>({
     user_id: null
 });
 
-if(id) {
-    const response = await $api.get<ApiResponse<{cost_type: CostTypeModel }>>(`cost-types/${id}`)
-    console.log(response)
-    if(response.status_page >= 400)
-        $toast.error('Could not retrive cost with given ID, refresh the page');
-    else
-        costTypeData.value = (response.data as { cost_type: CostTypeModel}).cost_type
+async function fetchCostType() {
+    if(id) {
+        const response = await $api.get<ApiResponse<{cost_type: CostTypeModel }>>(`cost-types/${id}`)
+        if(response.status_page >= 400)
+            $toast.error('Could not retrive cost with given ID, refresh the page');
+        else
+            costTypeData.value = (response.data as { cost_type: CostTypeModel}).cost_type
+    }
 }
 
+
+
 async function updateCostType(data: FormData) {
-    
+    try {
+        isLoading.value = true;
+        const response = await $api.put<ApiResponse<{ cost_type: CostTypeModel }>>(`cost-types/${id}`, data);
+        if(response.status_page >= 400)
+            $toast.error('Could not update cost with given ID, refresh the page');
+        else
+            await fetchCostType();
+        $toast.success(`Sucessfully updated ${costTypeData.value.name}`);
+        }
+    catch(err) {
+        console.error(err)
+    }
+    finally {
+        isLoading.value = false;
+    }
 }
+
+await fetchCostType();
 </script>
 
 <template>
@@ -39,7 +59,7 @@ async function updateCostType(data: FormData) {
             Go Back
         </UiAction>
     </UiSectionHeader>
-    <FormKit type="form" :actions="false" form-class="column-flow" @submit="updateCostType">
+    <FormKit type="form" :actions="false" form-class="column-flow maxed-form" @submit="updateCostType">
         <FormKit
             id="name"
             type="text"
@@ -64,7 +84,7 @@ async function updateCostType(data: FormData) {
             validation-visibility="blur"
         />
 
-        <UiAction class="add-to-list">
+        <UiAction class="add-to-list" :is-loading="isLoading">
             <font-awesome-icon icon="fa-solid fa-pen-nib" />
             Update
         </UiAction>

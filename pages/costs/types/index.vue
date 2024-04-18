@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ApiError, ApiResponse, CostTypeResponse, UserResponse } from '~/types/api';
-import type {  CostTypeModel, Pagination } from '~/types/general';
+import type {  CostTypeModel } from '~/types/general';
 
 interface FormData {
     name: string;
@@ -10,6 +10,10 @@ interface FormData {
 const { $api, $toast } = useNuxtApp();
 const authStore = useAuthStore();
 const modalOpened = ref(false);
+const isLoading = ref(false);
+const uiStore = useUiStore();
+const deleteModalOpened = ref(false);
+const rowSelectedId = ref<null | number>(null);
 const data = ref<CostTypeModel[]>([]);
 const suggestion = ref('Food and Dining')
 const suggestionList = ref([
@@ -38,6 +42,7 @@ function handleModal () {
 
 async function saveNewCost(data: FormData){
     try {
+        isLoading.value = true;
         const response = await $api.post<ApiResponse<CostTypeModel>>('cost-types', data);
         if(response.status_page >= 400) {
             const resData = response.data as ApiError;
@@ -55,6 +60,43 @@ async function saveNewCost(data: FormData){
     }
     catch(err) {
         console.error(err);
+    }
+    finally {
+        isLoading.value = false;
+    }
+}
+
+function handleReject() {
+    deleteModalOpened.value = false;
+    rowSelectedId.value = null;
+}
+
+function handleDeleteClick(id: number) {
+    rowSelectedId.value = id;
+    deleteModalOpened.value = true;
+}
+
+async function handleDeletion() {
+    try {
+        uiStore.fullSiteLoad = true;
+        deleteModalOpened.value = false;
+        if (!rowSelectedId.value) {
+            return $toast.error('Row ID is not selected, please try again!');
+        }
+        const response = await $api.delete<ApiResponse<string>>(`cost-types/${rowSelectedId.value}`)
+        if(response.status_page >= 400)
+            $toast.error('Could not delete given row, please try again!');
+        else {
+            await fetchCostTypes();
+            $toast.success('Sucessfully deleted an entry');
+        }
+    }
+    catch (err) {
+        console.error(err);
+    }
+    finally {
+        uiStore.fullSiteLoad = false;
+        rowSelectedId.value = null;
     }
 }
 
@@ -81,11 +123,10 @@ await fetchCostTypes();
                 </div>
             </template>
                 <MoleculesList 
-                    v-if="data.length"
                     :items="data" 
                     class="form-list" 
-                    :actions-to-hide="['delete']"
                     @edit-row="($event) => $event.id ? navigateTo({ name: 'costs-types-id', params: { id: $event.id }}) : undefined"
+                    @delete-row="($event) => $event.id ? handleDeleteClick($event.id as number) : undefined"
                 >
                     <template #row="{ item }">
                         <AtomsListItem :item="item">
@@ -103,6 +144,7 @@ await fetchCostTypes();
                     </template>
                 </MoleculesList>
         </main>
+        <OrganismConfirm v-model="deleteModalOpened" @reject="handleReject" @confirm="handleDeletion()"/>
         <UiDialog :model-value="modalOpened" width="1200px" @update:model-value="modalOpened = $event">
             <template #header>
                 Add cost type
@@ -145,7 +187,7 @@ await fetchCostTypes();
                             validation-visibility="blur"
                         />
 
-                        <UiAction class="add-to-list">
+                        <UiAction class="add-to-list" :is-loading="isLoading">
                             <font-awesome-icon icon="fa-solid fa-plus" />
                             Add
                         </UiAction>
