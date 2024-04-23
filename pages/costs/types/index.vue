@@ -7,15 +7,18 @@ interface FormData {
     desc: string;
 }
 
+const route = useRoute();
+const page = Number(route.query.page) || 1;
 const { $api, $toast } = useNuxtApp();
 const authStore = useAuthStore();
+const appStore = useAppStore();
 const modalOpened = ref(false);
 const isLoading = ref(false);
 const uiStore = useUiStore();
 const deleteModalOpened = ref(false);
 const rowSelectedId = ref<null | number>(null);
 const data = ref<CostTypeModel[]>([]);
-const suggestion = ref('Food and Dining')
+const suggestion = ref('Food and Dining');
 const suggestionList = ref([
     { name: 'Food and Dining', desc: 'Keep track of your grocery shopping and dining-out expenses.'},
     { name: 'Housing and Utilities', desc: 'Track your rent, electricity, water, and other home-related bills.'},
@@ -24,15 +27,18 @@ const suggestionList = ref([
     { name: 'Technology and Electronics', desc: 'Stay up-to-date on your tech purchases, from phones to gadgets.'},
 ]);
 const radioOptions = computed(() => {
-    return suggestionList.value.map(suggestion => ({ label: suggestion.name, value: suggestion.name, help: suggestion.desc }))
-})
-const selectedSuggestionObject = computed(() => suggestionList.value.find(sug => sug.name === suggestion.value))
+    return suggestionList.value.map(suggestion => ({ label: suggestion.name, value: suggestion.name, help: suggestion.desc }));
+});
+const selectedSuggestionObject = computed(() => suggestionList.value.find(sug => sug.name === suggestion.value));
+createPager(`cost-types`, page, 15);
+const pager = computed(() => appStore.pagers[`cost-types`]);
 
 async function fetchCostTypes () {
     const response = await $api.get<ApiResponse<CostTypeResponse>>('cost-types');
     if(response.status_page === 200)
     {
         data.value = (response.data as CostTypeResponse).cost_types.data
+        updatePager('cost-types', (response.data as CostTypeResponse).cost_types);
     }
 }
 
@@ -143,6 +149,7 @@ await fetchCostTypes();
                         </AtomsListItem>
                     </template>
                 </MoleculesList>
+                <MoleculesPagination pager-indentifier="cost-types"/>
         </main>
         <OrganismConfirm v-model="deleteModalOpened" @reject="handleReject" @confirm="handleDeletion()"/>
         <UiDialog :model-value="modalOpened" width="1200px" @update:model-value="modalOpened = $event">
