@@ -2,21 +2,19 @@
 import { useAppStore } from '~/stores/app';
 
 interface Props {
-    pagerIndentifier: string
+    pager: PagerInfo | null;
 }
 
 const route = useRoute();
 const router = useRouter();
-const store = useAppStore();
 const props = defineProps<Props>();
-const pager = computed(() => store.pagers[props.pagerIndentifier]);
 const pageFromQuery = computed(() => route.query.page as string || null);
 
 const emits = defineEmits(['change']);
 
 const getUrl = (index: number) =>
 {
-    pager.value!.currentPage = index;
+    props.pager!.currentPage = index;
     router.push({ name: route.name as string, params: route.params, query: { page: index } });
 
     emits('change');
@@ -24,12 +22,12 @@ const getUrl = (index: number) =>
 
 const pages = computed((): number[] =>
 {
-    if (!pager.value) return [];
+    if (!props.pager) return [];
 
     const pagesArray = [];
 
-    const min = Math.max(pager.value!.currentPage - 2, 1) + 1;
-    const max = Math.min(pager.value!.currentPage + 2, pager.value!.totalPage) - 1;
+    const min = Math.max(props.pager!.currentPage - 2, 1) + 1;
+    const max = Math.min(props.pager!.currentPage + 2, props.pager!.totalPage) - 1;
 
     for (let i = min; i <= max; i++)
     {
@@ -42,8 +40,8 @@ const pages = computed((): number[] =>
 watchEffect(() =>
 {
     if (pageFromQuery.value)
-        pager.value!.currentPage = Number(pageFromQuery.value);
-    else pager.value!.currentPage = 1;
+        props.pager!.currentPage = Number(pageFromQuery.value);
+    else props.pager!.currentPage = 1;
 });
 </script>
 

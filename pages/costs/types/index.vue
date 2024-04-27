@@ -31,15 +31,30 @@ const radioOptions = computed(() => {
 });
 const selectedSuggestionObject = computed(() => suggestionList.value.find(sug => sug.name === suggestion.value));
 createPager(`cost-types`, page, 15);
+createFilter(`cost-types`, {
+    name: ''
+});
+
 const pager = computed(() => appStore.pagers[`cost-types`]);
+const filterObject = computed(() => appStore.filters['cost-types']);
+
+const fetchParams = computed(() => {
+    let params: Record<string, unknown> = {};
+    if (filterObject.value.data().name)
+        params.name = filterObject.value.data().name;
+    params.page = pager.value?.currentPage || 1;
+    return params;
+})
 
 async function fetchCostTypes () {
-    const response = await $api.get<ApiResponse<CostTypeResponse>>('cost-types');
+    isLoading.value = true;
+    const response = await $api.get<ApiResponse<CostTypeResponse>>('cost-types', fetchParams.value);
     if(response.status_page === 200)
     {
         data.value = (response.data as CostTypeResponse).cost_types.data
         updatePager('cost-types', (response.data as CostTypeResponse).cost_types);
     }
+    isLoading.value = false;
 }
 
 function handleModal () {
@@ -128,6 +143,16 @@ await fetchCostTypes();
                     </div>
                 </div>
             </template>
+                <OrganismFilters identifier="cost-types" @changed="fetchCostTypes" :is-loading="isLoading">
+                    <FormKit
+                        v-model="filterObject.name"
+                        id="filter-name"
+                        type="text"
+                        label="Name"
+                        name="name"
+                        placeholder="Name"
+                    /> 
+                </OrganismFilters>
                 <MoleculesList 
                     :items="data" 
                     class="form-list" 
@@ -149,7 +174,7 @@ await fetchCostTypes();
                         </AtomsListItem>
                     </template>
                 </MoleculesList>
-                <MoleculesPagination pager-indentifier="cost-types"/>
+                <MoleculesPagination :pager="pager" @change="fetchCostTypes" />
         </main>
         <OrganismConfirm v-model="deleteModalOpened" @reject="handleReject" @confirm="handleDeletion()"/>
         <UiDialog :model-value="modalOpened" width="1200px" @update:model-value="modalOpened = $event">
@@ -165,7 +190,6 @@ await fetchCostTypes();
                         v-model="suggestion"
                         type="radio"
                         label="Types to choose from"
-                        
                         :options="radioOptions"
                     />
                 </div>
