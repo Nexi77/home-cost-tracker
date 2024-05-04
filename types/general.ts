@@ -19,3 +19,16 @@ export interface Pagination<T> {
     to: number;
     total: number;
 }
+
+export interface CostLimitModel {
+    id: number;
+    cost_type_id: number;
+    user_id: number;
+    weekly_limit: string;
+    monthly_limit: string;
+    quarter_limit: string;
+    yearly_limit: string;
+    created_at: string;
+    updated_at: string;
+    cost_type: CostTypeModel;
+}

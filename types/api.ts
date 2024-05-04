@@ -1,5 +1,5 @@
 import type { UserData } from "~/stores/auth";
-import type { CostTypeModel, Pagination } from "./general";
+import type { CostLimitModel, CostTypeModel, Pagination } from "./general";
 
 export interface UserModel {
     name: string;
@@ -25,6 +25,7 @@ export interface ApiError {
 
 export interface ApiResponse<T> {
     status_page: number;
+    status_code?: number;
     data: { message: string} & (T | ApiError)
 }
 
@@ -35,5 +36,9 @@ export interface UserResponse {
 
 export interface CostTypeResponse {
     cost_types: Pagination<CostTypeModel[]>;
+}
+
+export interface CostLimitResponse {
+    cost_type_limits: Pagination<CostLimitModel[]>
 }
 

@@ -28,8 +28,6 @@ async function fetchCostType() {
     }
 }
 
-
-
 async function updateCostType(data: FormData) {
     try {
         isLoading.value = true;
@@ -59,34 +57,36 @@ await fetchCostType();
             Go Back
         </UiAction>
     </UiSectionHeader>
-    <FormKit type="form" :actions="false" form-class="column-flow maxed-form" @submit="updateCostType">
-        <FormKit
-            id="name"
-            type="text"
-            label="Name"
-            name="name"
-            :validation-messages="{ required: 'Name is required'}"
-            :model-value="costTypeData.name"
-            placeholder="Name"
-            validation="required"
-            validation-visibility="blur"
-        /> 
-        <FormKit
-            id="desc"
-            type="textarea"
-            label="Description"
-            name="desc"
-            auto-height
-            :validation-messages="{ required: 'Description is required'}"
-            validation="required"
-            :model-value="costTypeData.desc"
-            placeholder="Description"
-            validation-visibility="blur"
-        />
+    <main>
+        <FormKit type="form" :actions="false" form-class="column-flow maxed-form" @submit="updateCostType">
+            <FormKit
+                id="name"
+                type="text"
+                label="Name"
+                name="name"
+                :validation-messages="{ required: 'Name is required'}"
+                :model-value="costTypeData.name"
+                placeholder="Name"
+                validation="required"
+                validation-visibility="blur"
+            /> 
+            <FormKit
+                id="desc"
+                type="textarea"
+                label="Description"
+                name="desc"
+                auto-height
+                :validation-messages="{ required: 'Description is required'}"
+                validation="required"
+                :model-value="costTypeData.desc"
+                placeholder="Description"
+                validation-visibility="blur"
+            />
 
-        <UiAction class="add-to-list" :is-loading="isLoading">
-            <font-awesome-icon icon="fa-solid fa-pen-nib" />
-            Update
-        </UiAction>
-    </FormKit>
+            <UiAction class="add-to-list" :is-loading="isLoading">
+                <font-awesome-icon icon="fa-solid fa-pen-nib" />
+                Update
+            </UiAction>
+        </FormKit>
+    </main>
 </template>

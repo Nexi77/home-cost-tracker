@@ -42,6 +42,12 @@ const isPartOfRoute = (parentPath: string) => {
                     <span>Cost types</span>
                 </NuxtLink>
             </li>
+            <li>
+                <NuxtLink to="/costs/limits" :class="{ 'router-link-active': isPartOfRoute('/costs/limits')}">
+                    <font-awesome-icon icon="fa-solid fa-shop" />
+                    <span>Cost limits</span>
+                </NuxtLink>
+            </li>
         </ul>
         <UiAction class="logout" variant="accent" @click="handleLogout">
             <font-awesome-icon icon="fa-solid fa-right-to-bracket" />
