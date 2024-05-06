@@ -1,5 +1,5 @@
 import type { UserData } from "~/stores/auth";
-import type { CostLimitModel, CostTypeModel, Pagination } from "./general";
+import type { CostLimitModel, CostTypeModel, CostsModel, Pagination } from "./general";
 
 export interface UserModel {
     name: string;
@@ -40,5 +40,15 @@ export interface CostTypeResponse {
 
 export interface CostLimitResponse {
     cost_type_limits: Pagination<CostLimitModel[]>
+}
+
+export interface CostsResponse {
+    costs: Pagination<CostsModel[]>;
+}
+
+export interface StatsModel {
+    cost_type_name: string;
+    cost_type_id: number;
+    price: number;
 }
 

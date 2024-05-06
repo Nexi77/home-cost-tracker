@@ -16,7 +16,9 @@ async function handleLogout() {
     navigateTo('/login');
 }
 
-const isPartOfRoute = (parentPath: string) => {
+const isPartOfRoute = (parentPath: string, exact = false) => {
+    if (exact)
+        return router.currentRoute.value.fullPath === parentPath || router.currentRoute.value.matched.some(match => match.path.includes(`${parentPath}/:id()`));
     return router.currentRoute.value.fullPath.startsWith(parentPath);
 }
 </script>
@@ -31,7 +33,7 @@ const isPartOfRoute = (parentPath: string) => {
         </NuxtLink>
         <ul>
             <li>
-                <NuxtLink to="/">
+                <NuxtLink to="/costs" :class="{ 'router-link-active': isPartOfRoute('/costs', true)}">
                     <font-awesome-icon icon="fa-solid fa-money-bill-wave" />
                     <span>Costs</span>
                 </NuxtLink>

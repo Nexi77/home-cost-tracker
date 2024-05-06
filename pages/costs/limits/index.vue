@@ -18,6 +18,7 @@ createFilter(`cost-limits`, {
     cost_type_name: '',
 });
 
+const router = useRouter();
 const pager = computed(() => appStore.pagers[`cost-types`]);
 const filterObject = computed(() => appStore.filters['cost-limits']);
 
@@ -33,7 +34,7 @@ const fetchParams = computed(() => {
 async function fetchCostLimits () {
     isLoading.value = true;
     const response = await $api.get<ApiResponse<CostLimitResponse>>('cost-types-limits', fetchParams.value);
-    if(response.status_code === 200)
+    if(response.status_code === 200 || response.status_page === 200)
     {
         data.value = (response.data as CostLimitResponse).cost_type_limits.data
         updatePager('cost-limits', (response.data as CostLimitResponse).cost_type_limits);
@@ -89,48 +90,48 @@ fetchCostLimits();
         </UiSectionHeader>
         <main>
             <OrganismFilters identifier="cost-types-limits" @changed="fetchCostLimits" :is-loading="isLoading">
-                    <FormKit
-                        v-model="filterObject.name"
-                        id="cost_type_name"
-                        type="text"
-                        label="Limit name"
-                        name="cost_type_name"
-                        placeholder="Limit name"
-                    /> 
-                </OrganismFilters>
-                <MoleculesList 
-                    :items="data" 
-                    class="form-list" 
-                    @edit-row="($event) => $event.id ? navigateTo({ name: 'costs-limits-id', params: { id: $event.id }}) : undefined"
-                    @delete-row="($event) => $event.id ? handleDeleteClick($event.id as number) : undefined"
-                >
-                    <template #row="{ item }">
-                        <AtomsListItem :item="item">
-                            <template #item="{ entry }">
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Name:</span>
-                                    <span>{{ (entry as CostLimitModel).cost_type.name }}</span>
-                                </div>
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Weekly limit ($):</span>
-                                    <span>{{ (entry as CostLimitModel).weekly_limit }}</span>
-                                </div>
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Monthly limit ($):</span>
-                                    <span>{{ (entry as CostLimitModel).monthly_limit }}</span>
-                                </div>
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Quarter limit ($):</span>
-                                    <span>{{ (entry as CostLimitModel).quarter_limit }}</span>
-                                </div>
-                                <div class="list-item-entry">
-                                    <span class="list-item-label">Yearly limit ($):</span>
-                                    <span>{{ (entry as CostLimitModel).yearly_limit }}</span>
-                                </div>
-                            </template>
-                        </AtomsListItem>
-                    </template>
-                </MoleculesList>
+                <FormKit
+                    v-model="filterObject.name"
+                    id="cost_type_name"
+                    type="text"
+                    label="Cost type name"
+                    name="cost_type_name"
+                    placeholder="Limit name"
+                /> 
+            </OrganismFilters>
+            <MoleculesList 
+                :items="data" 
+                class="form-list" 
+                @edit-row="($event) => $event.id ? router.push({ name: 'costs-limits-id', params: { id: $event.id }}) : undefined"
+                @delete-row="($event) => $event.id ? handleDeleteClick($event.id as number) : undefined"
+            >
+                <template #row="{ item }">
+                    <AtomsListItem :item="item">
+                        <template #item="{ entry }">
+                            <div class="list-item-entry">
+                                <span class="list-item-label">Name:</span>
+                                <span>{{ (entry as CostLimitModel).cost_type.name }}</span>
+                            </div>
+                            <div class="list-item-entry">
+                                <span class="list-item-label">Weekly limit ($):</span>
+                                <span>{{ (entry as CostLimitModel).weekly_limit }}</span>
+                            </div>
+                            <div class="list-item-entry">
+                                <span class="list-item-label">Monthly limit ($):</span>
+                                <span>{{ (entry as CostLimitModel).monthly_limit }}</span>
+                            </div>
+                            <div class="list-item-entry">
+                                <span class="list-item-label">Quarter limit ($):</span>
+                                <span>{{ (entry as CostLimitModel).quarter_limit }}</span>
+                            </div>
+                            <div class="list-item-entry">
+                                <span class="list-item-label">Yearly limit ($):</span>
+                                <span>{{ (entry as CostLimitModel).yearly_limit }}</span>
+                            </div>
+                        </template>
+                    </AtomsListItem>
+                </template>
+            </MoleculesList>
         </main>
         <OrganismConfirm v-model="deleteModalOpened" @reject="handleReject" @confirm="handleDeletion"/>
         <CostsCostLimitForm :modal-opened="formOpened" @update:model-value="formOpened = $event" @refetch="fetchCostLimits" />

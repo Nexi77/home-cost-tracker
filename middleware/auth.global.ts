@@ -1,4 +1,4 @@
-import { useAuthStore, type UserData } from "~/stores/auth";
+import { useAuthStore } from "~/stores/auth";
 import type { ApiResponse, UserResponse } from "~/types/api";
 
 export default defineNuxtRouteMiddleware(async (to) =>

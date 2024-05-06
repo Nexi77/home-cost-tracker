@@ -32,3 +32,19 @@ export interface CostLimitModel {
     updated_at: string;
     cost_type: CostTypeModel;
 }
+
+export interface CostsModel {
+    id: number;
+    date: string;
+    cost_type_id: string;
+    user_id: string;
+    desc: string;
+    price: string;
+    created_at: string;
+    updated_at: string;
+    cost_type: CostTypeModel;
+}
+
+export interface Tab {
+    title: string;
+}

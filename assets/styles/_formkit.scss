@@ -2,7 +2,7 @@ fieldset {
     border-radius: var(--base-radius);
 }
 
-input[type="text"], input[type="password"], input[type="email"], textarea, select {
+input[type="text"], input[type="password"], input[type="email"], input[type="date"], textarea, select {
     width: 100%;
     color: var(--clr-black);
     border-color: var(--clr-neutral-gray-blue);
@@ -32,4 +32,9 @@ input[type="radio"] {
 .formkit-option-help {
     font-size: small;
     color: var(--clr-accent)
+}
+
+.formkit-help {
+    font-size: small;
+    color: var(--clr-accent);
 }

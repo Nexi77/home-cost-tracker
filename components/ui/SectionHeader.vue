@@ -10,7 +10,7 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
 
     @media screen and (min-width: 400px) {
         flex-direction: row;
