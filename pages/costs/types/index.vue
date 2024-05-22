@@ -105,6 +105,10 @@ async function handleDeletion() {
             return $toast.error('Row ID is not selected, please try again!');
         }
         const response = await $api.delete<ApiResponse<string>>(`cost-types/${rowSelectedId.value}`)
+        if(response.status_page >= 500) {
+            $toast.error('You cannot delete cost type that is connected with existing cost');
+            return;
+        }
         if(response.status_page >= 400)
             $toast.error('Could not delete given row, please try again!');
         else {

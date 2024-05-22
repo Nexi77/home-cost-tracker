@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ApiResponse, CostsResponse } from '~/types/api';
-import type { CostsModel } from '~/types/general';
+import type { CostTypeModel, CostsModel } from '~/types/general';
 const { $api, $toast } = useNuxtApp();
 const route = useRoute();
 const page = Number(route.query.page) || 1;
@@ -21,7 +21,27 @@ createFilter(`costs`, {
 
 const pager = computed(() => appStore.pagers[`costs`]);
 const filterObject = computed(() => appStore.filters['costs']);
+const costTypes = ref<CostTypeModel[]>([]);
 const router = useRouter();
+
+const costTypesOptions = computed(() => {
+    return costTypes.value.map(type => ({ label: type.name, value: type.name }))
+})
+
+
+async function getTypesWithoutPagination() {
+    try {
+        const response = await $api.get<ApiResponse<{ cost_types: CostTypeModel[] }>>(`cost-types-without-pagination`)
+        if(response.status_page >= 400)
+            return;
+        else {
+            costTypes.value = (response.data as { cost_types: CostTypeModel[]}).cost_types;
+        }
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
 
 const fetchParams = computed(() => {
     let params: Record<string, unknown> = {};
@@ -80,6 +100,7 @@ async function handleDeletion() {
     }
 }
 
+await getTypesWithoutPagination();
 await fetchCosts();
 </script>
 
@@ -98,8 +119,9 @@ await fetchCosts();
             <FormKit
                 v-model="filterObject.cost_type_name"
                 id="cost_type_name"
-                type="text"
-                label="Cost type name"
+                type="select"
+                :options="costTypesOptions"
+                label="Name"
                 name="cost_type_name"
                 placeholder="Limit name"
             />
@@ -121,10 +143,10 @@ await fetchCosts();
             />
         </OrganismFilters>
         <MoleculesList 
-                :items="data" 
-                class="form-list" 
-                @edit-row="($event) => $event.id ? router.push({ name: 'costs-id', params: { id: $event.id }}) : undefined"
-                @delete-row="($event) => $event.id ? handleDeleteClick($event.id as number) : undefined"
+            :items="data" 
+            class="form-list" 
+            @edit-row="($event) => $event.id ? router.push({ name: 'costs-id', params: { id: $event.id }}) : undefined"
+            @delete-row="($event) => $event.id ? handleDeleteClick($event.id as number) : undefined"
             >
                 <template #row="{ item }">
                     <AtomsListItem :item="item">

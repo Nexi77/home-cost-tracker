@@ -37,6 +37,7 @@ async function updateCostType(data: FormData) {
         else
             await fetchCostType();
         $toast.success(`Sucessfully updated ${costTypeData.value.name}`);
+        navigateTo({ name: 'costs-types'})
         }
     catch(err) {
         console.error(err)
