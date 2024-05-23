@@ -13,4 +13,4 @@
     <div class="tab" v-show="index === selectedIndex">
       <slot></slot>
     </div>
-  </template>
+</template>

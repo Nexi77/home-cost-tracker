@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ChartData, ChartDataset } from 'chart.js';
 import type { ApiResponse, StatsModel } from '~/types/api';
 import { getCurrentDate, getFirstDayOfMonth, getFirstDayOfQuarter, getFirstDayOfYear } from '~/utils/getProperDate';
 interface Props {
@@ -29,15 +30,62 @@ const defaultDate = computed(() => {
 selectedDate.value = defaultDate.value;
 
 async function fetchStats() {
-    const response = await $api.get<ApiResponse<StatsModel[]>>(`${props.type}/costs/stats?date=${selectedDate.value}`);
+    const response = await $api.get<ApiResponse<{ data: StatsModel[] }>>(`${props.type}/costs/stats?date=${selectedDate.value}`);
     if(response.status_page === 200)
     {
-        data.value = (response.data as StatsModel[]);
+        data.value = ((response.data) as { data: StatsModel[] }).data;
     }
     if(response.status_page >= 400)
         $toast.error('We could not retrive stats for this period, please try again by navigating back and forth');
 }
 
+const getRandomColor = ()  => {
+  // Generate random RGB values
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  
+  // Convert RGB values to hexadecimal format
+  const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
+  
+  return color;
+}
+
+const summedPrices = computed(() => {
+    const accumulator: { [key: string]: number[] } = {};
+    data.value.forEach(entry => {
+        if (!accumulator[entry.cost_type_name]) {
+        accumulator[entry.cost_type_name] = [];
+        }
+        accumulator[entry.cost_type_name].push(Number(entry.price));
+    });
+    const result: { [key: string]: number } = {};
+    for (const label in accumulator) {
+        if (accumulator.hasOwnProperty(label)) {
+        result[label] = accumulator[label].reduce((total, price) => total + price, 0);
+        }
+    }
+    return result;
+});
+
+
+const chartData = computed<ChartData<"bar">>(() => {
+    const labels = Object.keys(summedPrices.value);
+    const prices = Object.values(summedPrices.value);
+
+    const datasets: ChartDataset<"bar">[] = labels.map((label, index) => ({
+      label,
+      data: [prices[index]],
+      backgroundColor: getRandomColor(),
+      borderColor: 'rgba(0, 0, 0, 1)',
+      borderWidth: 1
+    }));
+
+    return {
+        labels: ['Costs'],
+        datasets,
+    };
+});
 await fetchStats();
 </script>
 
@@ -56,6 +104,7 @@ await fetchStats();
                     @update:model-value="fetchStats"
                 />
             </div>
+            <MoleculesStatsChart :chart-data="chartData" />
         </main>
     </section>
 </template>
@@ -63,5 +112,10 @@ await fetchStats();
 <style lang="scss" scoped>
 .filters {
     max-width: 400px;
+}
+
+section {
+    width: 100%;
+    max-width: 1200px;
 }
 </style>
