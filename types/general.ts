@@ -1,7 +1,7 @@
 export interface CostTypeModel {
     name: string;
     desc: string;
-    id: number | null;
+    id: number;
     user_id: number | null;
 }
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ChartData, ChartDataset } from 'chart.js';
 import type { ApiResponse, StatsModel } from '~/types/api';
+import { getRandomColor } from '~/utils/genRandomColor';
 import { getCurrentDate, getFirstDayOfMonth, getFirstDayOfQuarter, getFirstDayOfYear } from '~/utils/getProperDate';
 interface Props {
     type: "daily" | "monthly" | "quarterly" | "yearly";
@@ -39,17 +40,6 @@ async function fetchStats() {
         $toast.error('We could not retrive stats for this period, please try again by navigating back and forth');
 }
 
-const getRandomColor = ()  => {
-  // Generate random RGB values
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  
-  // Convert RGB values to hexadecimal format
-  const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
-  
-  return color;
-}
 
 const summedPrices = computed(() => {
     const accumulator: { [key: string]: number[] } = {};

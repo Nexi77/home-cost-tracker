@@ -52,3 +52,12 @@ export interface StatsModel {
     price: number;
 }
 
+export interface PredictionModel {
+    date: string;
+    predicted_price: number;
+}
+
+export interface PredictionsResponse {
+    predictions: Record<string, PredictionModel[]>;
+}
+
